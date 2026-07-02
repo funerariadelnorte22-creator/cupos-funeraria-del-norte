@@ -93,7 +93,18 @@ async function renderCards(){
   let latestTs = 0;
   const cupos = await fetchCupos();
 
-  for(const plan of PLANS){
+  const params = new URLSearchParams(window.location.search);
+  const planParam = params.get('plan');
+  const planesAMostrar = planParam
+    ? PLANS.filter(p => p.id === planParam)
+    : PLANS;
+
+  if(planParam && planesAMostrar.length === 0){
+    grid.innerHTML = '<p style="text-align:center; color:var(--texto-suave);">No encontramos ese plan. Verificá el link.</p>';
+    return;
+  }
+
+  for(const plan of planesAMostrar){
     const info = cupos[plan.id] || { count: 0, updated_at: null };
     const count = info.count || 0;
     const ts = info.updated_at;
